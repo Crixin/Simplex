@@ -9,7 +9,7 @@
     <style>
         body {
             height: 100%;
-            background-image: url('back.jpeg');
+            background-image: url('fundo.jpeg');
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -19,7 +19,7 @@
     <br><br><br>
     <div class="col-md-3 mx-auto align-self-center card">
         <div class="card-body">
-            <form action="gerar.php" method="GET">
+            <form action="gerar.php" method="POST">
                 <label>Quantidade de variáveis:</label> 
                 <input type="number" name="qtd_x" class="form-control">
                 <br>

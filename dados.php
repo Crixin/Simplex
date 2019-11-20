@@ -16,7 +16,7 @@ require_once("funcoes.php");
     <style>
         body {
             height: 100%;
-            background-image: url('back.jpeg');
+            background-image: url('fundo.jpeg');
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -25,87 +25,117 @@ require_once("funcoes.php");
 
 <body>
     <div class="">
-        <div class="col-md-12 mx-auto card text-center">
-
-            <div class="container ">
-
+        <br> <br> <br>
+        <div class="col-md-8 mx-auto align-self-center card">
+            <div class="card-body">
                 <?php
 
                 $vet = array();
                 $vet_novo = array();
-           
-                $qtd_x = $_GET["qtd_x"];
-                $qtd_f = $_GET["qtd_f"];
+
+                $qtd_x = $_POST["qtd_x"];
+                $qtd_f = $_POST["qtd_f"];
 
                 $total = $qtd_x + $qtd_f;
                 $total += 1;
 
                 $qtd_f += 1;
                 $i = 0;
-                $index = 0;
-
-                while ($i < $qtd_f) {
-
-                    if ($i == 0) {
-                        $index++;
-                    } else {
-                        $index = 0;
-                    }
-
-                    echo "<div class='row mx-auto text-center'>";
-
-                    echo " <h6 class='col-md-1'> $index </h6>";
-
-                    $k = 1;
-                    $vet[$i][$k - 1] = $index;
-
-                    while ($k <= $total) {
-                        $valor = $_GET['f' . $i . 'x' . $k];
-
-                        if ($i == 0) {
-                            $valor = $valor * -1;
-                        }
-
-                        if ($valor != "") {
-                            echo " <h6 class='col-md-1'> $valor </h6>";
-
-                            $vet[$i][$k] = $valor;
-                        } else {
-                            if ($k == $total) {
-                                echo " <h6 class='col-md-1'> " . $_GET['f' . $i . 'res'] . " </h6>";
-
-                                $vet[$i][$k] = $_GET['f' . $i . 'res'];
-                            } else {
-                                if ($i == ($k - ($qtd_x))) {
-                                    echo " <h6 class='col-md-1'> 1 </h6>";
-                                    $vet[$i][$k] = 1;
-                                } else {
-                                    echo " <h6 class='col-md-1'> 0 </h6>";
-                                    $vet[$i][$k] = 0;
-                                }
+                $index = 0; ?>
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <?php
+                            $contLabel = 0;
+                            $name = "Z";
+                            while ($contLabel < $qtd_f -1) {
+                                echo '<th scope="col">' . $name . '</th>';
+                                $contLabel++;
+                                $name = "X" . $contLabel;
                             }
-                        }
-                        $k++;
-                    }
-                    echo "</div>";
-                    $i++;
-                }
+                            $contLabel = 1;
+                            while ($contLabel < $qtd_f) {
+                                $name = "xF" . $contLabel;
+                                echo '<th scope="col">' . $name . '</th>';
+                                $contLabel++;
+                            }
+                            echo '<th scope="col">b</th>';
+
+                            ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <?php
+                        while ($i < $qtd_f) {
+
+                            if ($i == 0) {
+                                $index = 1;
+                            } else {
+                                $index = 0;
+                            }
+                            ?>
+                            <tr>
+                                <?php
+                                    echo " <td > $index </td>";
+
+                                    $k = 1;
+                                    $vet[$i][$k - 1] = $index;
+
+                                    while ($k <= $total) {
+                                        $valor = $_POST['f' . $i . 'x' . $k];
+
+                                        if ($i == 0) {
+                                            $valor = $valor * -1;
+                                        }
+
+                                        if ($valor != "") {
+                                            echo " <td> $valor </td>";
+
+                                            $vet[$i][$k] = $valor;
+                                        } else {
+                                            if ($k == $total) {
+                                                echo " <td> " . $_POST['f' . $i . 'res'] . " </td>";
+
+                                                $vet[$i][$k] = $_POST['f' . $i . 'res'];
+                                            } else {
+                                                if ($i == ($k - ($qtd_x))) {
+                                                    echo " <td> 1 </td>";
+                                                    $vet[$i][$k] = 1;
+                                                } else {
+                                                    echo " <td> 0 </td>";
+                                                    $vet[$i][$k] = 0;
+                                                }
+                                            }
+                                        }
+                                        $k++;
+                                    }
+                                    echo "</div>";
+                                    $i++;
+                                ?>
+                            </tr>
+                        <?php
+                        } ?>
+                    </tbody>
+
+                </table>
+
+                <?php
                 $i = 0;
 
                 $qtd_linhas = count($vet);
                 $qtd_colunas = count($vet[0]);
-                echo "<br><br>---------------- PRIMEIRA ETAPA ------------------<br><br>";
 
                 $vet_novo = resolver($qtd_colunas, $qtd_linhas, $vet);
 
                 while (min($vet_novo[0]) < 0) {
                     $vet_novo = resolver($qtd_colunas, $qtd_linhas, $vet_novo);
                 }
-
                 echo "<br><br><br>";
                 ?>
             </div>
         </div>
     </div>
 </body>
+
 </html>

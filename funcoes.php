@@ -1,21 +1,69 @@
 <?php
 
-function gerar_nlp($pivo, $vet, $qtd_colunas, $linha_menor_valor)
+function calculaVarBases($vetor)
 {
-    $nlp = array();
-    $i = 0;
+    
+    $qtd_linhas = count($vetor);
+    $qtd_colunas = count($vetor[0]);
+    for ($i = 1; $i < $qtd_colunas -1; $i++){
+        $countUm = 0;
+        $countZero = 0;
+        $countOutro = 0;
+        $valor = 0;
 
-    while ($i < $qtd_colunas) {
-        $val = "";
-        if ($pivo == 0) {
-            $val = $vet[$linha_menor_valor][$i];
-        } else {
-            $val = $vet[$linha_menor_valor][$i] / $pivo;
+        for ($j = 1; $j < $qtd_linhas; $j++){
+            if($vetor[$j][$i] == 0){
+                $countZero++;
+            }elseif($vetor[$j][$i] == 1){
+                $valor = $j;
+                $countUm++;
+            }else{
+                $countOutro++;
+            }
         }
-        $nlp[$i] = $val;
-        $i++;
+        if($countUm == 1 && $countOutro == 0){
+            $resposta["base"][$i] = $valor; 
+        }else{
+            $resposta["nao_base"][$i] = 0; 
+        }
+
     }
-    return $nlp;
+    return $resposta;
+}
+
+function tituloVarBase($qtd_f)
+{
+    $retorno = array();
+    $k = 1;
+    for ($i = 1; $i < $qtd_f -1; $i++) {
+        $retorno[$k] = "X" . $i;
+        $k++;
+    }
+    
+    for ($i = 1; $i < $qtd_f; $i++) {
+        $retorno[$k] = "xF" . $i;
+        $k++;
+    }
+
+    return $retorno;
+}
+
+function montaCabecalho($qtd_f)
+{
+    $contLabel = 0;
+    $name = "Z";
+    while ($contLabel < $qtd_f - 1) {
+        echo '<th scope="col">' . $name . '</th>';
+        $contLabel++;
+        $name = "X" . $contLabel;
+    }
+    $contLabel = 1;
+    while ($contLabel < $qtd_f) {
+        $name = "xF" . $contLabel;
+        echo '<th scope="col">' . $name . '</th>';
+        $contLabel++;
+    }
+    echo '<th scope="col">b</th>';
 }
 
 function resolver($qtd_colunas, $qtd_linhas, $vet)
@@ -29,7 +77,6 @@ function resolver($qtd_colunas, $qtd_linhas, $vet)
     $linha_menor_valor = 1;
     $pivo = 0;
 
-
     // PEGA A LINHA COM O MENOR VALOR E O MENOR VALOR
     while ($i < $qtd_linhas) {
 
@@ -38,7 +85,7 @@ function resolver($qtd_colunas, $qtd_linhas, $vet)
         $valorColuna = $vet[$i][$coluna];
 
         if ($valorColuna < 0) {
-            $valorColuna = 0.0000000000;
+            $valorColuna = 0.000000;
         }
 
         if ($valorColuna == 0) {
@@ -58,48 +105,51 @@ function resolver($qtd_colunas, $qtd_linhas, $vet)
 
         $i++;
     }
-
-    echo "Menor valor = $menor_valor <br>";
-
     $pivo = $vet[$linha_menor_valor][$coluna];
-
-    echo "<br><br>---------------- SEGUNDA ETAPA ------------------<br><br>";
+    ?>
+    <br>
+    <!-- table pivo -->
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <td>Elemento pivô: <?= $pivo ?> (Linha: <?=$linha_menor_valor+1?> e Coluna: <?=$coluna+1?>) </td>
+            <?php montaCabecalho($qtd_linhas); ?>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Linha pivô</td>
+                <?php
+                    $i = 0;
+                    while ($i < $qtd_colunas) {
+                        $val = $vet[$linha_menor_valor][$i];
+                        echo "<td>" . number_format($val, 3, ",", ".") . " </td> ";
+                        $i++;
+                    } 
+                ?>
+            </tr>
+            <tr>
+                <td>Nova linha pivô</td>
+                <?php
+                    $novaLinhaPivo = array();
+                    $i = 0;
+                    while ($i < $qtd_colunas) {
+                        $val = "";
+                        $val = $vet[$linha_menor_valor][$i] / $pivo;
+                        $novaLinhaPivo[$i] = $val;
+                        echo "<td>" . number_format($val, 3, ",", ".") . " </td>  ";
+                        $i++;
+                    }
+                ?>
+            </tr>
+        </tbody>
+    </table>
+    <?php
 
     $i = 0;
-    echo "<b>Linha Pivô:</b> &nbsp";
-
-    while ($i < $qtd_colunas) {
-        $val = $vet[$linha_menor_valor][$i];
-        echo number_format($val, 3, ",", ".") . " &nbsp&nbsp&nbsp&nbsp  ";
-        $i++;
-    }
-
-    echo "<br>";
-    echo "<b>Nova Linha Pivô:</b> &nbsp";
-
-    $novaLinhaPivo = array();
-    $i = 0;
-
-    while ($i < $qtd_colunas) {
-
-        $val = "";
-
-        $val = $vet[$linha_menor_valor][$i] / $pivo;
-
-        $novaLinhaPivo[$i] = $val;
-        echo number_format($val, 3, ",", ".") . " &nbsp&nbsp&nbsp&nbsp  ";
-        $i++;
-    }
-
-    echo "<br>";
-    $i = 0;
+    //calculando a nova tabela 
     while ($i < $qtd_linhas) {
-
         if ($i != $linha_menor_valor) {
-
             $k = 0;
-            $nlp = gerar_nlp($pivo, $vet, $qtd_colunas, $linha_menor_valor);
-
+            $nlp = $novaLinhaPivo;
             while ($k < $qtd_colunas) {
                 $valor = $vet[$i][$coluna] * -1;
 
@@ -125,16 +175,136 @@ function resolver($qtd_colunas, $qtd_linhas, $vet)
     $i = 0;
 
     for ($i = 0; $i < $qtd_linhas; $i++) {
-        echo "<b><u>" . ($i + 1) . "ª</b></u> :";
+        if($linha_menor_valor != $i){ ?>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <td></td>
+                    <?php montaCabecalho($qtd_linhas); ?>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>NLP</td>
+                        <?php
+                            $novaLinhaPivo = array();
+                            $iterator = 0;
+                            while ($iterator < $qtd_colunas) {
+                                $val = "";
+                                $val = $vet[$linha_menor_valor][$iterator] / $pivo;
+                                $novaLinhaPivo[$iterator] = $val;
+                                echo "<td>" . number_format($val, 3, ",", ".") . " </td>  ";
+                                $iterator++;
+                            }
+                        ?>
+                    </tr>
+                    <tr>
+                        <td><?= $i + 1 ?>ª L</td>
+                        <?php 
+                            for ($j = 0; $j < $qtd_colunas; $j++) {
+                                echo "<td>" . number_format($vet[$i][$j], 3) . " </td>";
+                            }
+                        ?>
+                    </tr>
+                    <tr>
+                        <td><?= $i + 1 ?>ª NL</td>
+                        <?php 
+                            for ($j = 0; $j < $qtd_colunas; $j++) {
+                                echo "<td>" . number_format($vet_novo[$i][$j], 3) . " </td>";
+                            }
+                        ?>
+                    </tr>
+                </tbody>
+            </table>
 
-        for ($j = 0; $j < $qtd_colunas; $j++) {
-            echo number_format($vet_novo[$i][$j], 3) . " &nbsp&nbsp&nbsp&nbsp  ";
+    <?php
         }
-        echo "<br>";
     }
+    ?>
+    
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <?php montaCabecalho($qtd_linhas); ?>
+        </thead>
+        <tbody>
+            <?php 
+            for ($i = 0; $i < $qtd_linhas; $i++) {
+                echo '<tr>';
+                for ($j = 0; $j < $qtd_colunas; $j++) {
+                    echo "<td>" . number_format($vet_novo[$i][$j], 3) . " </td>";
+                }
+                echo '</tr>';
+            }?>
+        </tbody>
+    </table>
 
+<?php
+    
+    $titulos = tituloVarBase($qtd_linhas);
+    
+    $valoresBases = calculaVarBases($vet_novo);
+    
+?>
+    <div class="col-md-12 row">
+    <table class="table table-bordered mr-3 " style="width:200px ">
+        <thead class="thead-dark">
+            <tr>
+                <th>Variáveis básicas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <?php
+                   foreach ($valoresBases['base'] as $key => $value) {
+                       //print_r();
+                       //print_r($vet_novo[$value][$qtd_linhas+$qtd_linhas-2]);
+                       echo "<tr><td>".$titulos[$key]." = ". $vet_novo[$value][$qtd_linhas+$qtd_linhas-2]  . "</td></tr>";
+                    }
+                ?>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-bordered mr-3" style="width:200px ">
+        <thead class="thead-dark">
+            <tr>
+                <th>Variáveis não básicas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <?php
+                   foreach ($valoresBases['nao_base'] as $key => $value) {
+                       //print_r();
+                       //print_r($vet_novo[$value][$qtd_linhas+$qtd_linhas-2]);
+                       echo "<tr><td>".$titulos[$key]." = 0</td></tr>";
+                    }
+                ?>
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="table table-bordered mr-3" style="width:200px ">
+        <thead class="thead-dark">
+            <tr>
+                <th>Valor de Z</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <?php
+                    echo "<tr><td>".$vet_novo[0][$qtd_linhas+$qtd_linhas-2]."</td></tr>";
+                ?>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+
+<?php
     $i = 0;
     $k = 0;
-
+/*     print_r("<pre>");
+    print_r($vet_novo);
+    print_r("</pre>");
+    exit(); */
     return $vet_novo;
 }
