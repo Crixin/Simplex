@@ -24,20 +24,19 @@
         <br><br><br>
         <div class="container card">
 
-            <form action="dados.php" method="POST">
+            <form action="montaTabela.php" method="POST">
 
                 <div class="row card">
 
                     <?php
-                    $qtd_x = $_POST["qtd_x"];
-                    $qtd_f = $_POST["qtd_f"];
+                    $qtdVar = $_POST["qtdVar"];
+                    $qtdRes = $_POST["qtdRes"];
 
-                    echo "<input type='hidden' name='qtd_x' value='$qtd_x'>\n";
-                    echo "<input type='hidden' name='qtd_f' value='$qtd_f'>";
+                    echo "<input type='hidden' name='qtdVar' value='$qtdVar'>\n";
+                    echo "<input type='hidden' name='qtdRes' value='$qtdRes'>";
 
                     $i = 0;
-                    while ($i <= $qtd_f) {
-
+                    while ($i <= $qtdRes) {
                         $var_name = " a $i ª restrição:";
 
                         if ($i == 0) {
@@ -51,7 +50,7 @@
                             <div class='input-group'>";
 
                             $k = 1;
-                            while ($k <= $qtd_x) {
+                            while ($k <= $qtdVar) {
                                 echo "<label class='mr-2 ml-2'>X$k:</label><input type='number' name='f" . $i . "x" . $k . "' class='form-control col-md-2' step='0.001'>";
                                 $k++;
                             }

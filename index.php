@@ -19,12 +19,12 @@
     <br><br><br>
     <div class="col-md-3 mx-auto align-self-center card">
         <div class="card-body">
-            <form action="gerar.php" method="POST">
+            <form action="restricoes.php" method="POST">
                 <label>Quantidade de variáveis:</label> 
-                <input type="number" name="qtd_x" class="form-control">
+                <input type="number" name="qtdVar" class="form-control">
                 <br>
                 <label>Quantidade de restrições: </label>
-                <input type="number" name="qtd_f" class="form-control">
+                <input type="number" name="qtdRes" class="form-control">
                 <br>
                 <button type="submit" class="btn btn-primary form-control">Gerar</button>
             </form>

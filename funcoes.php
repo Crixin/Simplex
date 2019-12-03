@@ -66,7 +66,7 @@ function montaCabecalho($qtd_f)
     echo '<th scope="col">b</th>';
 }
 
-function resolver($qtd_colunas, $qtd_linhas, $vet)
+function calcular($qtd_colunas, $qtd_linhas, $vet)
 {
     $vet_novo = array();
     $coluna = array_search(min($vet[0]), $vet[0]);

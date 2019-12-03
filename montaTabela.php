@@ -33,13 +33,13 @@ require_once("funcoes.php");
                 $vet = array();
                 $vet_novo = array();
 
-                $qtd_x = $_POST["qtd_x"];
-                $qtd_f = $_POST["qtd_f"];
+                $qtdVar = $_POST["qtdVar"];
+                $qtdRes = $_POST["qtdRes"];
 
-                $total = $qtd_x + $qtd_f;
+                $total = $qtdVar + $qtdRes;
                 $total += 1;
 
-                $qtd_f += 1;
+                $qtdRes += 1;
                 $i = 0;
                 $index = 0; ?>
                 <table class="table table-bordered">
@@ -48,13 +48,13 @@ require_once("funcoes.php");
                             <?php
                             $contLabel = 0;
                             $name = "Z";
-                            while ($contLabel < $qtd_f -1) {
+                            while ($contLabel < $qtdRes -1) {
                                 echo '<th scope="col">' . $name . '</th>';
                                 $contLabel++;
                                 $name = "X" . $contLabel;
                             }
                             $contLabel = 1;
-                            while ($contLabel < $qtd_f) {
+                            while ($contLabel < $qtdRes) {
                                 $name = "xF" . $contLabel;
                                 echo '<th scope="col">' . $name . '</th>';
                                 $contLabel++;
@@ -67,7 +67,7 @@ require_once("funcoes.php");
                     <tbody>
 
                         <?php
-                        while ($i < $qtd_f) {
+                        while ($i < $qtdRes) {
 
                             if ($i == 0) {
                                 $index = 1;
@@ -99,7 +99,7 @@ require_once("funcoes.php");
 
                                                 $vet[$i][$k] = $_POST['f' . $i . 'res'];
                                             } else {
-                                                if ($i == ($k - ($qtd_x))) {
+                                                if ($i == ($k - ($qtdVar))) {
                                                     echo " <td> 1 </td>";
                                                     $vet[$i][$k] = 1;
                                                 } else {
@@ -126,10 +126,11 @@ require_once("funcoes.php");
                 $qtd_linhas = count($vet);
                 $qtd_colunas = count($vet[0]);
 
-                $vet_novo = resolver($qtd_colunas, $qtd_linhas, $vet);
-
+                $vet_novo = calcular($qtd_colunas, $qtd_linhas, $vet);
+                        
+                // usa o min pra ficar chamado a funcao até que o valor de z seja uma solução ótima
                 while (min($vet_novo[0]) < 0) {
-                    $vet_novo = resolver($qtd_colunas, $qtd_linhas, $vet_novo);
+                    $vet_novo = calcular($qtd_colunas, $qtd_linhas, $vet_novo);
                 }
                 echo "<br><br><br>";
                 ?>
